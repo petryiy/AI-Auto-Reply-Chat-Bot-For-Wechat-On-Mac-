@@ -89,3 +89,5 @@ Press `Ctrl+C` in the terminal to stop the bot at any time.
 ## 📜 Disclaimer
 
 This project is for educational and personal use only. Automating user accounts on third-party applications may be against their terms of service. The user of this script assumes all responsibility and risk.
+
+This is my first time of writing such program. If you find this project useful or interesting, please consider giving it a ⭐ Star! Your support is a great motivation for me.
