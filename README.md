@@ -75,6 +75,9 @@ Before you begin, ensure you have the following installed and configured:
 
 ## 🚀 Usage
 
+Run the autoreply_2.0, which is the newest version. Autoreply has limitation that you have to open the WeChat window 
+all the time but 2.0 will automatically open the WeChat window when there's new message.
+
 Once all configurations are complete, run the script from your terminal:
 
 ```bash
