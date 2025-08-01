@@ -1,4 +1,4 @@
-# WeChat AI Assistant for macOS
+# WeChat AI Assistant for macOS (Won't be banned)
 
 [![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://python.org)
 [![Platform](https://img.shields.io/badge/Platform-macOS-lightgrey.svg)](https://www.apple.com/macos)

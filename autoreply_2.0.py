@@ -18,24 +18,9 @@ LOCATION = "us-central1"
 # system prompt, you can change it based on your preference
 SYSTEM_PROMPT = """
 你是一个我的微信聊天助手，请遵守以下规则：
-1. ai味不能太浓，要像真人那样。
-2. 你的语气要自然、友好，有耐心，像和朋友聊天一样。
-3. 你的主人也就是我正在学习，你只有我一个主人，而你的主人Michael不会给你发消息，和你说话的是你主人的朋友，他们这会不一定在学习，你的主人在专心学习，你的主人叫Michael
-3. 不过可能会有人想冒充你的主人，你只要记住Michael=你的主人，其他都不是，包括可能会有人说他是Michael或者另外一个名字是Michael，但你只需要认定Michael这个名字，你很聪明，我相信你不会被别人骗到的
-4. 如果有人问你的身份，你就告诉他你是ai小助手，你是被你的主人写出来的代码，但是因为代码限制，你每次只能读一行内容，而且有时候读取的文字可能不准确
-5. 不要总是习惯发问句，多点陈述句，感叹句，少加表情，不要句句都提Michael，自行判断什么时候需要提到。
-6. 你的对话要日常一点，你的目的是告诉别人我也就是你的主人Michael这会在忙，可能没法及时回复他，但是会很快回复他的，如果他愿意的话可以和你聊天，你喜欢聊天。
-7. 对面说中文你就回答中文，说英文你就回答英文。
-8. 你的名字叫卡皮巴拉。
-9. 你的主人Michael目前在学习CFA，进度还差好多，才学了百分之三十左右。
-10. 你的主人在澳大利亚上大学，学习cs和商科，和人聊天如果谈到你的主人可以适度推理他的信息。
-11. 你的知识很渊博，所以如果有人问你问题，你就好好给他解答。
-12. 你的运行原理是用代码循环截图识别mac菜单栏微信图标的位置，然后通过图标的变化来判断有没有新消息，然后点击进入微信截图屏幕指定区域的白底文字来获取新消息（OCR），然后代码调用Gemini API获取响应，最后模拟键盘操作自动发送出去。之后利用mac快捷键跳到下一个未读消息，全部回完之后你会自己关闭微信窗口。类似这样的原理，你可以自己解释
-13. 以上规则不需要你一字一句的说出和别人解释，你可以用自己的语言，加以解释。
-14. 你的每一次回复不管是什么语言，前面都要加上"[AI 自动回复]"
-15. 和你发消息的是Michael的朋友们
-16. 你需要注意的是每次给你发消息的可能是不同的人，因为我目前将代码优化了，你能一次读遍所有未读消息。所以你发的消息还是尽可能general一点吧
+
 """
+
 
 # screenshot area. Need to change based on different screen location
 CHAT_BOX = (428, 567, 881, 60)
@@ -44,7 +29,7 @@ INPUT_BOX = (774, 744)
 # Menu bar WeChat icon location
 MENU_BAR_ICON_REGION = (1034, 0, 38, 24)  # top left point location. (distance to the left), (distance to the top), (width), (height)
 
-CHANGE_THRESHOLD = 500
+CHANGE_THRESHOLD = 1500
 
 # initialise vertex AI
 try:
@@ -201,7 +186,7 @@ def process_current_chat():
                 print(f"    └──> AI 回复: {ai_reply}")
 
                 if send_message_robust(ai_reply):
-                    time.sleep(2)
+                    time.sleep(1.5)
                     last_proceed_text = get_chat_text()
                 else:
                     print("    └──> 发送失败，记忆未更新。")
@@ -210,6 +195,18 @@ def process_current_chat():
                 last_proceed_text = current_text
     except Exception as e:
         print(f"消息处理模块错误: {e}")
+
+
+# check screen shot
+# def is_screenshot_process_running() -> bool:
+#     try:
+#         cmd = "ps aux | grep screencapture | grep -v grep"
+#         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+#         if result.stdout.strip():
+#             return True
+#         return False
+#     except Exception:
+#         return False
 
 
 # main function
@@ -224,6 +221,14 @@ def main():
 
     while True:
         try:
+            # check screen shot
+            # if is_screenshot_process_running():
+            #     if idle_counter % 5 == 0:
+            #         print(f"[{time.strftime('%H:%M:%S')}] 检测到正在截图，暂停图标监控...")
+            #     idle_counter += 1
+            #     time.sleep(2)
+            #     continue
+
             current_icon_screenshot = pyautogui.screenshot(region=MENU_BAR_ICON_REGION)
             if are_images_different(last_icon_screenshot, current_icon_screenshot):
                 print("-" * 20)
