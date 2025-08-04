@@ -1,5 +1,4 @@
 service_account.json
-*.json
 
 __pycache__/
 *.pyc
@@ -9,4 +8,4 @@ venv/
 .DS_Store
 
 debug_ocr.png
-main.py
+spam.py

@@ -1,0 +1,29 @@
+{
+  "screen_regions": {
+    "chat_box": [428, 567, 756, 60],
+    "input_box": [774, 744],
+    "menu_bar_icon": [1034, 0, 38, 24]
+  },
+  "detection_settings": {
+    "icon_change_threshold_pixel_sum": 1500,
+    "icon_change_threshold_phash": 5
+  },
+  "ocr_settings": {
+    "tesseract_config": "--psm 6 --oem 3",
+    "language": "chi_sim+eng"
+  },
+  "api_credentials": {
+    "google_application_credentials": "service_account.json",
+    "project_id": "teaching-466210",
+    "location": "us-central1"
+  },
+  "ai_settings": {
+    "model_name": "gemini-2.0-flash-001",
+    "system_prompt_file": "system_prompt.txt"
+  },
+  "timing": {
+    "main_loop_sleep": 3,
+    "short_delay": 1,
+    "long_delay": 1.5
+  }
+}
