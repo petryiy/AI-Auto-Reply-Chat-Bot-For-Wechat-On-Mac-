@@ -1,13 +1,22 @@
 # main.py
 import pyautogui
+import pyperclip
 import time
 import logging
 import os
+import re
 from config import settings
-from vision import are_images_different, get_chat_text
-from automation import open_wechat_and_focus, switch_to_unread_chat, send_message_robust, hide_wechat
+from vision import are_images_different
+from automation import (
+    open_wechat_and_focus,
+    send_message_robust,
+    hide_wechat,
+    get_chat_text_via_applescript,
+    get_current_chat_id,
+    jump_to_next_unread_and_verify
+)
 from ai_service import ai_client
-import pyperclip
+from state_manager import state
 
 
 # using logging to record status
@@ -33,66 +42,93 @@ def setup_logging():
     logger.addHandler(stream_handler)
 
 
-# function to handle a single chat window. getting the text, asking AI and sending message
-def process_current_chat(last_processed_text_ref):
-    logging.info("Processing message...")
-    try:
-        current_text = get_chat_text()
-        if not current_text or current_text == last_processed_text_ref['text']:
-            logging.info("No new content。")
-            return
+def parse_and_get_last_opponent_message(full_text: str) -> str:
+    # ... (此函数内容不变) ...
+    if not full_text:
+        return ""
+    opponent_messages = []
+    lines = full_text.strip().split('\n')
+    for line in lines:
+        if not line.startswith("MeSaid:"):
+            cleaned_line = re.sub(r'^.*?Said:', '', line).strip()
+            if cleaned_line:
+                opponent_messages.append(cleaned_line)
+    if opponent_messages:
+        last_message = opponent_messages[-1]
+        logging.info(f"    └──> 解析出的对方最后一条消息: '{last_message[:50]}...'")
+        return last_message
+    else:
+        logging.info("    └──> 未解析出任何有效的对方消息。")
+        return ""
 
-        new_content = current_text.replace(last_processed_text_ref['text'], '').strip()
-        logging.info(f"Extracted new content: '{new_content}'")
 
-        if new_content:
-            ai_reply = ai_client.get_reply(new_content)
-            if send_message_robust(ai_reply):
-                time.sleep(settings.get('timing.long_delay'))
-                last_processed_text_ref['text'] = get_chat_text()
-            else:
-                logging.warning("memory not updated")
-        else:
-            last_processed_text_ref['text'] = current_text
+def process_current_chat():
+    """【已升级】处理当前窗口，完全依赖AppleScript"""
+    logging.info("  └──> 开始处理当前对话...")
+    chat_id = get_current_chat_id()
+    if not chat_id:
+        logging.warning("无法获取当前chat_id，跳过处理。")
+        return
 
-    except Exception as e:
-        logging.error(f"error: {e}", exc_info=True)
+    # 【已统一】只使用 AppleScript 获取文本
+    full_text_block = get_chat_text_via_applescript()
+    if not full_text_block:
+        logging.warning(f"在 '{chat_id}' 中未能获取到文本。")
+        return
+
+    last_opponent_message = parse_and_get_last_opponent_message(full_text_block)
+
+    history = state.get_history(chat_id)
+
+    # 检查这条消息是否已经在历史中
+    if history and any(msg['role'] == 'user' and msg['parts'][0]['text'] == last_opponent_message for msg in history):
+        logging.info(f"'{chat_id}' 中的最新消息已在历史中，判定为无新内容。")
+        return
+
+    if last_opponent_message:
+        logging.info(f"在 '{chat_id}' 中发现新内容: '{last_opponent_message[:50]}...'")
+        ai_reply = ai_client.get_reply(history, last_opponent_message)
+        if send_message_robust(ai_reply):
+            state.update_history(chat_id, last_opponent_message, ai_reply)
+    else:
+        logging.info(f"'{chat_id}' 中无新内容需要回复。")
 
 
 def main():
     setup_logging()
-    logging.info("WeChat AI auto reply start")
+    logging.info("微信 AI 自动回复脚本已启动 (终极修正版)。")
     menu_bar_region = settings.get('screen_regions.menu_bar_icon')
-    logging.info(f"Monitoring menu bar: {menu_bar_region}")
+    logging.info(f"正在监视菜单栏区域: {menu_bar_region}")
 
     last_icon_screenshot = pyautogui.screenshot(region=menu_bar_region)
-    last_processed_text_ref = {'text': ""}
 
     while True:
         try:
             current_icon_screenshot = pyautogui.screenshot(region=menu_bar_region)
             if are_images_different(last_icon_screenshot, current_icon_screenshot):
-                logging.info("Detected changes in the menu bar button")
+                logging.info("侦测到菜单栏图标变化！")
 
                 open_wechat_and_focus()
 
-                process_current_chat(last_processed_text_ref)
+                # 1. 先处理一次当前窗口
+                process_current_chat()
 
-                while switch_to_unread_chat():
-                    process_current_chat(last_processed_text_ref)
+                # 2. 使用新的、可靠的导航函数来循环处理其他未读消息
+                while jump_to_next_unread_and_verify():
+                    process_current_chat()
 
                 hide_wechat()
 
-                logging.info("...Completed processing message, back to monitoring...")
+                logging.info("...所有消息处理完毕，已返回侦察模式...")
                 last_icon_screenshot = pyautogui.screenshot(region=menu_bar_region)
 
-            time.sleep(settings.get('timing.main_loop_sleep'))
+            time.sleep(settings.get('timing.main_loop_sleep', 3))
 
         except KeyboardInterrupt:
-            logging.info("Program stopped。")
+            logging.info("脚本已手动停止。")
             break
         except Exception as e:
-            logging.critical(f"Error: {e}", exc_info=True)
+            logging.critical(f"主循环发生致命错误: {e}", exc_info=True)
             time.sleep(5)
 
 
