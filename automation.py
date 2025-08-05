@@ -6,6 +6,7 @@ import subprocess
 import time
 import logging
 from config import settings
+import os
 
 
 # clicks the menu bar icon and open wechat
@@ -37,7 +38,7 @@ def hide_wechat():
 
 def get_chat_text_via_applescript() -> str | None:
     """【已升级】能更好地处理AppleScript的特定错误返回"""
-    script_path = 'get_wechat_messages.applescript'
+    script_path = os.path.join(os.path.dirname(__file__), 'get_wechat_messages.applescript')
     try:
         result = subprocess.run(
             ['osascript', script_path], capture_output=True, text=True,

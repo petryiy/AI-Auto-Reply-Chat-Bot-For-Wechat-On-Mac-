@@ -3360,3 +3360,19 @@ subprocess.CalledProcessError: Command '['osascript', 'get_wechat_messages.apple
 2025-08-05 21:29:17,095 - INFO - automation - 已发送 Command+H 快捷键。
 2025-08-05 21:29:17,095 - INFO - main - ...所有消息处理完毕，已返回侦察模式...
 2025-08-05 21:29:30,649 - INFO - main - 脚本已手动停止。
+2025-08-05 22:17:46,117 - INFO - main - 微信 AI 自动回复脚本已启动 (终极修正版)。
+2025-08-05 22:17:46,117 - INFO - main - 正在监视菜单栏区域: [1034, 0, 38, 24]
+2025-08-05 22:18:02,534 - INFO - vision - 检测到图标变化。pHash 距离: 34 (阈值: 5)
+2025-08-05 22:18:02,534 - INFO - main - 侦测到菜单栏图标变化！
+2025-08-05 22:18:02,534 - INFO - automation - 点击菜单栏图标，准备打开微信...
+2025-08-05 22:18:04,355 - INFO - main -   └──> 开始处理当前对话...
+2025-08-05 22:18:04,580 - INFO - automation - 获取到当前聊天ID: Weixin
+2025-08-05 22:18:05,040 - WARNING - automation - AppleScript 执行返回一个已知的错误: AppleScript Error: System Events got an error: Can’t get scroll area 2 of window 1 of process "WeChat". Invalid index. (Code: -1719)
+2025-08-05 22:18:05,041 - WARNING - main - 在 'Weixin' 中未能获取到文本。
+2025-08-05 22:18:05,041 - INFO - automation - 尝试跳转到下一个未读对话...
+2025-08-05 22:18:05,511 - WARNING - automation - AppleScript 执行返回一个已知的错误: AppleScript Error: System Events got an error: Can’t get scroll area 2 of window 1 of process "WeChat". Invalid index. (Code: -1719)
+2025-08-05 22:18:07,983 - WARNING - automation - AppleScript 执行返回一个已知的错误: AppleScript Error: System Events got an error: Can’t get scroll area 2 of window 1 of process "WeChat". Invalid index. (Code: -1719)
+2025-08-05 22:18:07,983 - INFO - automation - 回复完毕，隐藏微信窗口...
+2025-08-05 22:18:08,860 - INFO - automation - 已发送 Command+H 快捷键。
+2025-08-05 22:18:08,861 - INFO - main - ...所有消息处理完毕，已返回侦察模式...
+2025-08-05 22:18:30,143 - INFO - main - 脚本已手动停止。
