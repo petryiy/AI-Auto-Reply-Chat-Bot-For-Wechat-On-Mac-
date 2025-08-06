@@ -24,16 +24,32 @@ def open_wechat_and_focus():
 
 
 # use shortcut to close wechat window after processing messages
+# def hide_wechat():
+#     logging.info("回复完毕，隐藏微信窗口...")
+#     try:
+#         script = 'tell application "System Events" to tell process "WeChat" to set frontmost to true'
+#         subprocess.run(["osascript", "-e", script], check=True)
+#         time.sleep(0.5)
+#         pyautogui.hotkey('command', 'm')
+#         logging.info("已发送 Command+h 快捷键。")
+#     except Exception as e:
+#         logging.error(f"隐藏微信失败: {e}", exc_info=True)
+
 def hide_wechat():
     logging.info("回复完毕，隐藏微信窗口...")
+    script = '''
+    tell application "System Events"
+        if exists process "WeChat" then
+            set visible of process "WeChat" to false
+        end if
+    end tell
+    '''
     try:
-        script = 'tell application "System Events" to tell process "WeChat" to set frontmost to true'
-        subprocess.run(["osascript", "-e", script], check=True)
-        time.sleep(0.5)
-        pyautogui.hotkey('command', 'h')
-        logging.info("已发送 Command+H 快捷键。")
+        time.sleep(1)
+        subprocess.run(["osascript", "-e", script], check=True, timeout=5)
+        logging.info("微信已通过设置进程可见性隐藏。")
     except Exception as e:
-        logging.error(f"隐藏微信失败: {e}", exc_info=True)
+        logging.error(f"直接隐藏进程失败: {e}", exc_info=True)
 
 
 # use shortcut to navigate to the next unread message
@@ -42,7 +58,7 @@ def switch_to_unread_chat() -> bool:
     logging.info("正在寻找下一个未读消息...")
     try:
         text_before_jump = get_chat_text()
-        pyautogui.hotkey('option', 'command', 'g')
+        pyautogui.hotkey('option', 'command', 'down')
         time.sleep(settings.get('timing.short_delay'))
         text_after_jump = get_chat_text()
 
