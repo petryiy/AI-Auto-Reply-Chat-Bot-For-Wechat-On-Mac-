@@ -7,8 +7,8 @@ import numpy as np
 import re
 from config import settings
 import logging
-import imagehash  # 引入新库
-import cv2  # 引入新库
+import imagehash
+import cv2
 
 
 # image processing using opencv
