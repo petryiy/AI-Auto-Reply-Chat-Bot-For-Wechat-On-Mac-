@@ -42,7 +42,7 @@ def switch_to_unread_chat() -> bool:
     logging.info("正在寻找下一个未读消息...")
     try:
         text_before_jump = get_chat_text()
-        pyautogui.hotkey('command', 'g')
+        pyautogui.hotkey('option', 'command', 'g')
         time.sleep(settings.get('timing.short_delay'))
         text_after_jump = get_chat_text()
 

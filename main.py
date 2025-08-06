@@ -12,9 +12,9 @@ import pyperclip
 
 # using logging to record status
 def setup_logging():
-    log_dir = 'logs'
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    # log_dir = 'logs'
+    # if not os.path.exists(log_dir):
+    #     os.makedirs(log_dir)
 
     log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(module)s - %(message)s')
 
@@ -24,9 +24,9 @@ def setup_logging():
     if logger.hasHandlers():
         logger.handlers.clear()
 
-    file_handler = logging.FileHandler(os.path.join(log_dir, "app.log"))
-    file_handler.setFormatter(log_formatter)
-    logger.addHandler(file_handler)
+    # file_handler = logging.FileHandler(os.path.join(log_dir, "app.log"))
+    # file_handler.setFormatter(log_formatter)
+    # logger.addHandler(file_handler)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(log_formatter)
